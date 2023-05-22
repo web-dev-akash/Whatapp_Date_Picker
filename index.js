@@ -5,6 +5,7 @@ const app = express();
 app.use(express.json());
 const watiAPI = process.env.WATI_API;
 const token = process.env.WATI_TOKEN;
+const authToken = process.env.AUTH_TOKEN;
 const PORT = process.env.PORT || 8080;
 
 const authMiddleware = (req, res, next) => {
@@ -12,9 +13,9 @@ const authMiddleware = (req, res, next) => {
   if (!authHeader) {
     return res.status(401).json({ message: "Authorization header missing" });
   }
-  const token = authHeader.split(" ")[1];
+  const auth = authHeader.split(" ")[1];
   try {
-    if (token == AUTH_TOKEN) {
+    if (auth === authToken) {
       next();
     } else {
       return res.status(401).json({ message: "Invalid token" });
@@ -45,9 +46,13 @@ const getWhatsappMessage = async (phone) => {
       break;
     }
   }
-  webinarDate = msg.substring(52, 60);
-  webinarTime = msg.substring(71, 76);
-  return { webinarDate, webinarTime };
+  if (msg.length == 0) {
+    return "No message found";
+  } else {
+    webinarDate = msg.substring(52, 60);
+    webinarTime = msg.substring(71, 76);
+    return { webinarDate, webinarTime };
+  }
 };
 
 app.post("/webinarDate", authMiddleware, async (req, res) => {
