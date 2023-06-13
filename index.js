@@ -38,7 +38,7 @@ const getWhatsappMessage = async (phone) => {
   );
   // console.log(res.data);
   const data = res.data.messages.items;
-  console.log("Before Filter");
+  // console.log("Before Filter");
   let msg = "";
   for (let i = data.length - 1; i >= 0; i--) {
     if (data[i].text && data[i].text.includes("Book my free Olympiad Demo")) {
@@ -67,6 +67,14 @@ app.post("/webinarDate", authMiddleware, async (req, res) => {
       error,
     });
   }
+});
+
+app.post("/toLowercase", (req, res) => {
+  const data = req.body;
+  const text = data.text.toLowerCase();
+  res.send({
+    data: text,
+  });
 });
 
 app.listen(PORT, () => {
